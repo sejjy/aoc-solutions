@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+#
+# Compile and run a single-file puzzle
+#
+# Dependencies:
+#   - gcc
+#
+# Author: Jesse Mirabel <sejjymvm@gmail.com>
+# Date:   November 05, 2026
+
+fatal() {
+	echo "${0##*/}: $*" >&2
+	exit 1
+}
+
+valid() {
+	[[ $1 -ge $2 && $1 -le $3 ]]
+}
+
+main() {
+	if [[ $# -lt 3 ]]; then
+		fatal "<year> <day> <part> [args...]"
+	fi
+
+	local year=$1
+	local day=$2
+	local part=$3
+	local args=("${@:4}")
+
+	local current_year
+	current_year=$(date +%Y)
+
+	if ! valid "$year" 2015 "$current_year"; then
+		fatal "year must be 2015 to $current_year"
+	fi
+
+	if ! valid "$day" 1 25; then
+		fatal "day must be 1 to 25"
+	fi
+
+	if ! valid "$part" 1 2; then
+		fatal "part must be 1 or 2"
+	fi
+
+	printf -v day "%02d" "$day"
+
+	local infile="./$year/day_$day/part_$part.c"
+	local outfile="./$year/day_$day/a.out"
+	local input_txt="./$year/day_$day/input.txt"
+
+	# shellcheck disable=SC2064
+	trap "rm -f $outfile" EXIT
+
+	if gcc -O -Wall -W -pedantic -ansi -std=c99 -o "$outfile" "$infile"; then
+		if [[ ${args[*]} == "@INPUT@" ]]; then
+			"$outfile" <"$input_txt"
+		else
+			"$outfile" "${args[@]}"
+		fi
+	fi
+}
+
+main "$@"

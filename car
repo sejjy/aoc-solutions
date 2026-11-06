@@ -1,12 +1,23 @@
 #!/usr/bin/env bash
 #
-# Compile and run a single-file puzzle
+# Compile and run a single-file solution
 #
 # Dependencies:
 #   - gcc
 #
 # Author: Jesse Mirabel <sejjymvm@gmail.com>
 # Date:   November 05, 2026
+
+usage() {
+	local script=${0##*/}
+	cat <<-EOF
+		$script: $script <year> <day> <part> [args...]
+		    Compile and run a single-file solution
+
+		    Special argument:
+		      @INPUT@   Use the input.txt file for the specified year and day
+	EOF
+}
 
 fatal() {
 	echo "${0##*/}: $*" >&2
@@ -19,7 +30,8 @@ valid() {
 
 main() {
 	if [[ $# -lt 3 ]]; then
-		fatal "<year> <day> <part> [args...]"
+		usage >&2
+		return 1
 	fi
 
 	local year=$1

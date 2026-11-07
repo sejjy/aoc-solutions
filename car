@@ -11,11 +11,11 @@
 usage() {
 	local script=${0##*/}
 	cat <<-EOF
-		$script: $script <year> <day> <part> [args...]
+		$script: $script year day_# part_# [args...]
 		    Compile and run a single-file solution
 
 		    Special argument:
-		      @INPUT@   Use the input.txt file for the specified year and day
+		      @INPUT@   Use the input.txt file for the specified year and day_#
 	EOF
 }
 
@@ -47,11 +47,11 @@ main() {
 	fi
 
 	if ! valid "$day" 1 25; then
-		fatal "day must be 1 to 25"
+		fatal "day_# must be 1 to 25"
 	fi
 
 	if ! valid "$part" 1 2; then
-		fatal "part must be 1 or 2"
+		fatal "part_# must be 1 or 2"
 	fi
 
 	printf -v day "%02d" "$day"
